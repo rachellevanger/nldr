@@ -172,11 +172,11 @@ This note set gives a short summary of a collection of commonly-used linear and 
 
 \subsection{Principal Component Analysis (PCA)} 
 
-PCA is a tool used to describe a data set in terms of its directions of highest covariance. Given a data set $X = \{x^{(i)}\}_{i=1}^m \in \R^n$ with mean $\mu_X = (\mu_1, ..., \mu_n)$ and $\mu_k = (1/m)\sum_{i=1}^m x^{(i)}_k$, the general sequence of steps is as follows:
+PCA is a tool used to describe a data set in terms of its intrinsic directions of highest covariance. Consider a set $S$ of $m$ points in $\R^n$. Then $S$ can be represented as an $m \times n$ matrix $X$. Call $\mu_X = (\mu_1, ..., \mu_n)$ the center of the data set, or the average of each of the columns of $X$. The general sequence of steps to perform a PCA on $X$ is as follows:
 \begin{enumerate}[(1)]
-\item Compute the covariance matrix $\Sigma$ associated to the data set $X$, where $\Sigma_{ij} = \text{cov}(x^{(i)}, x^{(j)}) =(1/n) \sum_{k=1}^n (x_k^{(i)} - \mu_i)(x_k^{(j)} - \mu_j).$
-\item Diagonalize $\Sigma$ via the matrices $\Phi$ and $\Lambda$, where $\Phi$ is orthogonal and $\Lambda$ is diagonal. The matrix $\Phi$ has columns that form the orthonormal basis of eigenvectors of $\Sigma$, $\Lambda$ gives the corresponding eigenvalues, and the equation $\Sigma = \Phi \Lambda \Phi^T$ holds. This is always possible since $\Sigma$ is real and symmetric.
-\item The magnitude of the eigenvalues in $\Lambda$ provide insight into the number of dimensions along which the data is organized.
+\item Compute the covariance matrix $\Sigma$ associated to the data set $X$, where $\Sigma_{ij} = \text{cov}(X_{*i}, X_{*j}) =(1/n) \sum_{k=1}^n (X_{ki} - \mu_i)(X_{kj} - \mu_j).$ Notice that this is just the dot product of the mean-centered column vectors of the data matrix divided by the dimension of the space.
+\item Since $\Sigma$ is real and symmetric, we can diagonalize $\Sigma$ via the matrices $\Phi$ and $\Lambda$, where $\Phi$ is orthogonal and $\Lambda$ is diagonal. The matrix $\Phi$ has columns that form the orthonormal basis of eigenvectors of $\Sigma$, $\Lambda$ gives the corresponding eigenvalues, and the equation $\Sigma = \Phi \Lambda \Phi^T$ holds.
+\item The magnitude of the eigenvalues in $\Lambda$ provide insight into the number of dimensions along which the data is organized. Furthermore, since the eigenvectors are orthogonal, the covariance along any two transformed basis vectors are zero (their dot product is zero).
 \end{enumerate}
 
 
