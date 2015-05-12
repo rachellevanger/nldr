@@ -1,0 +1,188 @@
+%%%%%%%%%%%%%%%%%%          gtlatex.tem       %%%%%%%%%%%%%%%%%%
+%
+%  Template for articles written in LaTeX for publication in
+%  G&T, G&TM and A&GT.  This template must be used with latex2e.  
+%  If you use BiBTeX then you can collect the bibliography style 
+%  file  gtart.bst  from the same directory as this file.  Full
+%  instructions for using gtpart.cls are given in gtpartdoc.pdf.  
+%
+%
+\documentclass{gtpart}     
+%
+%\usepackage{pinlabel}  %%% the recommended graphics+labelling package
+\usepackage{graphicx}  %%% the recommended graphics package
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage[mathscr]{euscript}
+\usepackage{enumerate}
+
+
+%%% Start of metadata
+%
+
+\title{A Survey of Dimensionality Reduction Techniques}
+
+%  First author
+%
+\author{Rachel Levanger}
+\givenname{Rachel}
+\surname{Levanger}
+\address{}
+\email{rachel@math.rutgers.edu}
+\urladdr{}
+
+%  Second author (uncomment if necessary)
+%
+%\author{}
+%\givenname{}
+%\surname{}
+%\address{}
+%\email{}
+%\urladdr{}
+%
+%  (Add a similar block for other authors)
+%
+%   Title and author both have running head options:
+%
+%   \title[Running head title]{Main title}
+%   \author[Running head author]{Author}
+%
+% give a separate \keyword and \subject line for each keyword/phrase or 
+% subject class eg \keyword{framed link} \subject{primary}{msc2000}{57M25}
+
+\keyword{}
+\subject{primary}{msc2000}{}
+
+%
+%  fill in the reference and password if your article is stored at the
+%  arXiv eg \arxivreference{math.GT/0512347}  \arxivpassword{5spud}
+
+\arxivreference{}
+\arxivpassword{}
+
+%
+%  Leave the following items blank
+%
+\volumenumber{}
+\issuenumber{}
+\publicationyear{}
+\papernumber{}
+\startpage{}
+\endpage{}
+\doi{}
+\MR{}
+\Zbl{}
+\received{}
+\revised{}
+\accepted{}
+\published{}
+\publishedonline{}
+\proposed{}
+\seconded{}
+\corresponding{}
+\editor{}
+\version{}
+
+%%% End of metadata
+%
+%%% Start of user-defined macros %%%
+%
+%   Theorem-type environments.  There are two predefined styles :
+%
+%   \theoremstyle{plain} : for theorems, corollaries etc with heading 
+%   bold and left justified, optional note bracketed in roman type
+%   and statement in slanted type.  This is the default style.
+%
+%   \theoremstyle{definition} : (alias remark)  for definitions, remarks 
+%   etc with heading bold and left justified, optional note as before but
+%   with statement in roman type.
+%   
+%   Some sample  \newtheorem's  (delete these unless you need
+%   them and insert your own):
+%
+\newtheorem{thm}{Theorem}[section]    % Standard theorem environment
+\newtheorem{lem}[thm]{Lemma}          % Lemma environment with numbering 
+%                                     % consecutive to theorems
+\newtheorem{prop}[thm]{Proposition}          % Proposition environment with numbering 
+%                                     % consecutive to theorems
+\newtheorem{cor}[thm]{Corollary}          % Corollary environment with numbering 
+%                                     % consecutive to theorems
+\newtheorem*{zlem}{Zorn's Lemma}      % A special unnumbered lemma.
+%
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}    % Definition environment with 
+%                                     % numbering consecutive to theorems
+\newtheorem{ex}[thm]{Example}    % Example environment with 
+%                                     % numbering consecutive to theorems
+\newtheorem*{rem}{Remark}             % Unnumbered environment for remarks.
+%
+%   Type your macros (\newcommand's etc) below.
+%
+
+% Common spaces
+\newcommand{\mbb}[1]{\mathbb{#1}}
+\newcommand{\mcal}[1]{\mathcal{#1}}
+\newcommand{\mbm}[1]{\mathbbm{#1}}
+\newcommand{\mscr}[1]{\mathscr{#1}}
+
+% Arrows
+\newcommand{\larr}{\leftarrow}
+\newcommand{\rarr}{\rightarrow}
+\newcommand{\lrarr}{\leftrightarrow}
+\newcommand{\Larr}{\Leftarrow}
+\newcommand{\Rarr}{\Rightarrow}
+\newcommand{\LRarr}{\Leftrightarrow}
+
+% Greeks
+\newcommand{\lbd}{\lambda}
+\newcommand{\eps}{\varepsilon}
+
+% Functions
+\newcommand{\X}[1]{\chi_{#1}}
+
+% Formatting
+\newcommand{\ul}[1]{\underline{#1}}
+
+% Misc
+\newcommand{\ip}[2]{\langle {#1},{#2}\rangle}
+
+
+%%%% MACROS SPECIFIC TO THIS PAPER
+
+
+%%% End of user-defined macros %%%
+
+\begin{document}
+
+\begin{abstract}    % type your abstract below
+
+This note set gives a short summary of a collection of commonly-used linear and non-linear dimensionality reduction techniques.
+
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%   Start of main body of article
+
+\pagebreak 
+
+\section{Linear Dimensionality Reduction (LDR) Techniques}
+
+\subsection{Principal Component Analysis (PCA)} 
+
+PCA is a tool used to describe a data set in terms of its directions of highest covariance. Given a data set $X = \{x^{(i)}\}_{i=1}^m \in \R^n$ with mean $\mu_X = (\mu_1, ..., \mu_n)$ and $\mu_k = (1/m)\sum_{i=1}^m x^{(i)}_k$, the general sequence of steps is as follows:
+\begin{enumerate}[(1)]
+\item Compute the covariance matrix $\Sigma$ associated to the data set $X$, where $\Sigma_{ij} = \text{cov}(x^{(i)}, x^{(j)}) =(1/n) \sum_{k=1}^n (x_k^{(i)} - \mu_i)(x_k^{(j)} - \mu_j).$
+\item Diagonalize $\Sigma$ via the matrices $\Phi$ and $\Lambda$, where $\Phi$ is orthogonal and $\Lambda$ is diagonal. The matrix $\Phi$ has columns that form the orthonormal basis of eigenvectors of $\Sigma$, $\Lambda$ gives the corresponding eigenvalues, and the equation $\Sigma = \Phi \Lambda \Phi^T$ holds. This is always possible since $\Sigma$ is real and symmetric.
+\item The magnitude of the eigenvalues in $\Lambda$ provide insight into the number of dimensions along which the data is organized.
+\end{enumerate}
+
+
+
+(source: https://stat.duke.edu/~sayan/Sta613/2015/lec/IDAPILecture15.pdf)
+
+
+\end{document}
+
