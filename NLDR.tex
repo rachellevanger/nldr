@@ -196,6 +196,25 @@ http://infolab.stanford.edu/~ullman/mmds/ch11.pdf \\
 
 \subsection{Locally-linear Embedding (LLE)}
 
+This technique works best when the points in your dataset are assumed to have densely sampled a portion of a manifold that can be `flattened out' in some sense. For instance, the swiss roll is a two-dimensional manifold with boundary that can be flattened out into a portion of a two-dimensional plane, while a torus cannot be flattened out as such and would not be a good candidate for this method.
+
+Locally-linear embedding (LLE) rests on the assumption that points that are nearest to a target point lie on the same portion of the manifold as the target point, i.e. the sampling density is much smaller than the weak feature size of the underlying manifold. Let $X = \{x_1, ..., x_N\}$ be a set of points in $\R^D$, $K \in \mathbb{N}$, and $d < D$ be the desired embedding dimension. 
+
+{\bf Algorithm:}
+\begin{enumerate}[(1)]
+\item {\it Find the $K$ nearest neighbors of each point.} Compute the distance matrix of the data set $X$. Let $N_K:X \rightarrow \mathscr{P}(X)$ be the function that assigns to each $x_i$ its $K$ nearest neighbors, $N_K(x_i)$, which can be gleaned from the distance matrix.
+\item {\it Solve for the reconstruction weights.} 
+	\begin{enumerate}[(a)]
+	\item For each $x_i \in X$, create a matrix $Z_i$ with a column for each element in $N_K(x_i)$. Subtract $x_i$ from each column in $Z$ (center at $x_i$). 
+	\item Set $C_i = Z_i^T Z_i$ ($K$ times the local covariance), and solve for a vector $w_i$ such that $C_i w_i = [1]$, where $[1]$ is a column vector of all ones. 
+	\item Populate the $i^{th}$ row of the weight matrix $W$ as follows. If $x_j \notin N_K(x_i)$, set $W_{ij} = 0$. If $x_j \in N_K(x_i)$ then set $W_{ij} = w_j/(w \cdot [1])$, where $w_j$ is the entry in $w$ corresponding to the neighbor $x_j$.
+	\end{enumerate}
+\item {\it Compute the embedding coordinates.} Set $M = (I - W)^T(I - W)$. Find the $d + 1$ eigenvectors corresponding to the smallest eigenvalues of $M$. Set the $q^{th}$ row of $Y$ to be the eigenvector corresponding to the $(q+1)^{th}$-smallest eigenvalue. (Thus, the eigenvector corresponding to the smallest eigenvalue of $M$ is not used in $Y$.
+\end{enumerate}
+
+sources:\\
+https://www.cs.nyu.edu/~roweis/lle/algorithm.html
+
 \subsection{Hessian Locally-linear Embedding (Hessian LLE)}
 
 \subsection{Laplacian Eigenmaps}

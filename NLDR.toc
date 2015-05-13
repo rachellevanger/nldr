@@ -5,6 +5,6 @@
 \contentsline {subsection}{\numberline {2.1}Kernel PCA}{3}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Isomap}{3}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Locally-linear Embedding (LLE)}{3}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}Hessian Locally-linear Embedding (Hessian LLE)}{3}{subsection.2.4}
-\contentsline {subsection}{\numberline {2.5}Laplacian Eigenmaps}{3}{subsection.2.5}
-\contentsline {subsection}{\numberline {2.6}Diffusion Maps}{3}{subsection.2.6}
+\contentsline {subsection}{\numberline {2.4}Hessian Locally-linear Embedding (Hessian LLE)}{4}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Laplacian Eigenmaps}{4}{subsection.2.5}
+\contentsline {subsection}{\numberline {2.6}Diffusion Maps}{4}{subsection.2.6}
