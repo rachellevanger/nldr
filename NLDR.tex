@@ -172,17 +172,35 @@ This note set gives a short summary of a collection of commonly-used linear and 
 
 \subsection{Principal Component Analysis (PCA)} 
 
-PCA is a tool used to describe a data set in terms of its extrinsic (linear) directions of highest covariance, and does so in a way that the data is uncorrelated with respect to these directions. Consider a set $S$ of $m$ points in $\R^n$. Then $S$ can be represented as an $m \times n$ matrix $X$. Call $\mu_X = (\mu_1, ..., \mu_n)$ the center of the data set, or the average of each of the columns of $X$. The general sequence of steps to perform a PCA on $X$ is as follows:
+PCA is a tool used to describe a data set in terms of its extrinsic (linear) directions of highest variance, and does so in a way that the data is uncorrelated with respect to these directions. Consider a set $S$ of $m$ points in $\R^n$. Then $S$ can be represented as an $m \times n$ matrix $X$. Call $\mu_X = (\mu_1, ..., \mu_n)$ the center of the data set, or the average of each of the columns of $X$. The general sequence of steps to perform a PCA on $X$ is as follows:
 \begin{enumerate}[(1)]
-\item Compute the covariance matrix $\Sigma$ associated to the data set $X$, where $$\Sigma_{ij} = \text{cov}(X_{*i}, X_{*j}) =(1/m) \sum_{k=1}^m (X_{ki} - \mu_i)(X_{kj} - \mu_j).$$ Notice that this is just the dot product of the mean-centered column vectors of the data matrix divided by the number of points in $S$.
+\item Traditionally, compute the covariance matrix $\Sigma$ associated to the data set $X$, where $$\Sigma_{ij} = \text{cov}(X_{*i}, X_{*j}) =(1/m) \sum_{k=1}^m (X_{ki} - \mu_i)(X_{kj} - \mu_j).$$ Notice that this is just the dot product of the mean-centered column vectors of the data matrix divided by the number of points in $S$. It is also possible to use $\Sigma = X^TX$ or the correlation matrix, as these are all essentially functions of the dot product, they are real and symmetric, and so diagonalization yields an orthogonal set of eigenvectors. Using $\Sigma = X^TX$ is essentially the computation of the Singular Value Decomposition (SVD) of $X$ as it relates to finding the directions of highest variance.
 \item Since $\Sigma$ is real and symmetric, we can diagonalize $\Sigma$ via the matrices $\Phi$ and $\Lambda$, where $\Phi$ is orthogonal and $\Lambda$ is diagonal. The matrix $\Phi$ has columns that form the orthonormal basis of eigenvectors of $\Sigma$, $\Lambda$ gives the corresponding eigenvalues, and the equation $\Sigma = \Phi \Lambda \Phi^T$ holds.
 \item The magnitude of the eigenvalues in $\Lambda$ provide insight into the number of dimensions along which the data is organized. Furthermore, since the eigenvectors are orthogonal, the covariance along any two transformed basis vectors are zero (their dot product is zero).
 \end{enumerate}
 
-(source: https://stat.duke.edu/~sayan/Sta613/2015/lec/IDAPILecture15.pdf)
+sources:  \\
+https://stat.duke.edu/~sayan/Sta613/2015/lec/IDAPILecture15.pdf \\
+http://infolab.stanford.edu/~ullman/mmds/ch11.pdf \\
 
-\subsection{Singular Value Decomposition (SVD)}
+\subsection{Multidimensional scaling (MDS)}
 
+
+
+
+\section{Non-linear Dimensionality Reduction (NLDR) Techniques}
+
+\subsection{Kernel PCA}
+
+\subsection{Isomap}
+
+\subsection{Locally-linear Embedding (LLE)}
+
+\subsection{Hessian Locally-linear Embedding (Hessian LLE)}
+
+\subsection{Laplacian Eigenmaps}
+
+\subsection{Diffusion Maps}
 
 
 \end{document}
