@@ -192,13 +192,28 @@ http://infolab.stanford.edu/~ullman/mmds/ch11.pdf \\
 
 \subsection{Kernel PCA}
 
-\subsection{Isomap}
-
 \subsection{Locally-linear Embedding (LLE)}
 
-This technique works best when the points in your dataset are assumed to have densely sampled a portion of a manifold that can be `flattened out' in some sense. For instance, the swiss roll is a two-dimensional manifold with boundary that can be flattened out into a portion of a two-dimensional plane, while a torus cannot be flattened out as such and would not be a good candidate for this method.
+This technique works best when the points in your dataset are assumed to have densely sampled a portion of a manifold that can be `flattened out' in some sense. For instance, the swiss roll is a two-dimensional manifold with boundary that can be flattened out into a portion of a two-dimensional plane, while a torus cannot be flattened out as such and would not be a good candidate for this method. Locally-linear embedding (LLE) also rests on the assumption that points that are nearest to a target point lie on the same portion of the manifold as the target point, i.e. the sampling density is much smaller than the weak feature size of the underlying manifold. 
 
-Locally-linear embedding (LLE) rests on the assumption that points that are nearest to a target point lie on the same portion of the manifold as the target point, i.e. the sampling density is much smaller than the weak feature size of the underlying manifold. Let $X = \{x_1, ..., x_N\}$ be a set of points in $\R^D$, $K \in \mathbb{N}$, and $d < D$ be the desired embedding dimension. 
+Let $X = \{x_1, ..., x_N\}$ be a set of points in $\R^D$, $K \in \mathbb{N}$, and $d < D$ be the desired embedding dimension. The general idea of performing a LLE is as follows:
+
+First, a weight matrix $W$ is constructed that minimizes a certain error function. The error of the weight assignment can be computed as $$\mathscr{E}(W) = \sum_i \left| x_i - \sum_j W_{ij} x_j \right|^2.$$ Thus, when the error is minimized, the distance from $x_i$ to a weighted sum of its neighbors is minimized. We require that $W_{ij} = 0$ if $x_j$ is not a neighbor of $x_i$, and $\sum_j W_{ij} = 1$, so that we are taking a weighted sum of vectors that are all neighbors of $x_i$. How is the weight matrix $W$ constructed? For a data point $x$, call its set of $K$ nearest neighbors $\{ \eta_j\}_{j=1}^K$ and $\{w_j\}_{j=1}^K$ the set of weights associated to each. The error for the weight assignment of a single point $x$ can be expressed as $$\varepsilon(x) = \left| x - \sum_{j=1}^K w_j \eta_j \right|^2 = \left| x\sum_{j=1}^K w_j - \sum_{j=1}^K w_j \eta_j \right|^2 = \left| \sum_{j=1}^K w_j(x - \eta_j)\right|^2.$$ Now, let $C_{jk} = (x - \eta_j) \cdot (x - \eta_k)$, the covariance of the neighbors of $x$ to the point $x$ itself. Then since $|x|^2 =  x \cdot x $, it follows that 
+\begin{align*}
+\varepsilon(x) &= \left (  \sum_{j=1}^K w_j(x - \eta_j) \right) \cdot \left( \sum_{k=1}^K w_k(x - \eta_k) \right ) \\
+&= \sum_{j=1}^K \sum_{k=1}^K w_j w_k  (x - \eta_j) \cdot (x - \eta_k) \\
+&= \sum_{j,k} w_j w_k C_{jk}.
+\end{align*}
+To find the vectors $w_j$, it is sufficient to solve the system of equations $\sum_j C_{jk}w_k = 1$, then rescale the $w_j$ so that they sum to 1. 
+
+Next, the embedded dataset $Y = \{y_1, ..., y_N\}$ must be constructed. Essentially, this dataset is the one that minimizes the cost function $$\Phi(Y) = \sum_i \left| y_i - \sum_j W_{ij} y_j \right|^2$$ after the weight matrix $W$  has already been computed from $X$. Since the weights have already been selected so that they represent a good relationship between the distance between a data point and its neighbors, minimizing $\Phi$ via an embedded dataset $Y$ stands a good chance of maintaining these neighbor relationships. How are the points $Y$ found? Set $M_{ij} = \delta_{ij} - W_{ij} - W_{ji} + \sum_k W_{ki}W_{kj}$, where $\delta_{ij} =1$ if $i=j$ and 0 otherwise. Then the cost function $\Phi$ can be restated as $$\Phi(Y) = \sum_{i,j} M_{ij}(y_i \cdot y_j).$$ Two assumptions are added to make the optimization possible:
+\begin{enumerate}[(i)]
+\item The points $Y$ are centered at the origin, so that $\sum_{i=1}^N y_i = 0$.
+\item The covariance matrix of $Y$ is the $d \times d$ identity matrix, so that $\frac{1}{N} \sum y_i y_i^T = I_d$.
+\end{enumerate}
+Finally, the bottom $d+1$ eigenvectors of $M = (I - W)^T(I - W)$ (with the exception of the eigenvector corresponding to the smallest eigenvalue) form the embedding vectors. 
+
+
 
 {\bf Algorithm:}
 \begin{enumerate}[(1)]
@@ -216,6 +231,8 @@ sources:\\
 https://www.cs.nyu.edu/~roweis/lle/algorithm.html
 
 \subsection{Hessian Locally-linear Embedding (Hessian LLE)}
+
+\subsection{Isomap}
 
 \subsection{Laplacian Eigenmaps}
 
