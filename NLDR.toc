@@ -3,8 +3,8 @@
 \contentsline {subsection}{\numberline {1.2}Multidimensional scaling (MDS)}{3}{subsection.1.2}
 \contentsline {section}{\numberline {2}Non-linear Dimensionality Reduction (NLDR) Techniques}{3}{section.2}
 \contentsline {subsection}{\numberline {2.1}Kernel PCA}{3}{subsection.2.1}
-\contentsline {subsection}{\numberline {2.2}Locally-linear Embedding (LLE)}{3}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}Hessian Locally-linear Embedding (Hessian LLE)}{5}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}Isomap}{5}{subsection.2.4}
-\contentsline {subsection}{\numberline {2.5}Laplacian Eigenmaps}{5}{subsection.2.5}
-\contentsline {subsection}{\numberline {2.6}Diffusion Maps}{5}{subsection.2.6}
+\contentsline {subsection}{\numberline {2.2}Locally-linear Embedding (LLE)}{5}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Hessian Locally-linear Embedding (Hessian LLE)}{8}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Isomap}{8}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Laplacian Eigenmaps}{8}{subsection.2.5}
+\contentsline {subsection}{\numberline {2.6}Diffusion Maps}{8}{subsection.2.6}

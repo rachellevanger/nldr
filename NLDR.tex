@@ -156,7 +156,7 @@
 
 \begin{abstract}    % type your abstract below
 
-This note set gives a short summary of a collection of commonly-used linear and non-linear dimensionality reduction techniques.
+This note set gives a short summary of a collection of commonly-used linear and non-linear dimensionality reduction techniques. When applicable, we include a comment on how the technique can be applied to analyzing the geometry of a point cloud in the space of persistence diagrams.
 
 \end{abstract}
 
@@ -173,7 +173,7 @@ This note set gives a short summary of a collection of commonly-used linear and 
 \subsection{Principal Component Analysis (PCA)} 
 
 PCA is a tool used to describe a data set in terms of its extrinsic (linear) directions of highest variance, and does so in a way that the data is uncorrelated with respect to these directions. Consider a set $S$ of $m$ points in $\R^n$. Then $S$ can be represented as an $m \times n$ matrix $X$. Call $\mu_X = (\mu_1, ..., \mu_n)$ the center of the data set, or the average of each of the columns of $X$. The general sequence of steps to perform a PCA on $X$ is as follows:
-\begin{enumerate}[(1)]
+\begin{enumerate}[1.]
 \item Traditionally, compute the covariance matrix $\Sigma$ associated to the data set $X$, where $$\Sigma_{ij} = \text{cov}(X_{*i}, X_{*j}) =(1/m) \sum_{k=1}^m (X_{ki} - \mu_i)(X_{kj} - \mu_j).$$ Notice that this is just the dot product of the mean-centered column vectors of the data matrix divided by the number of points in $S$. It is also possible to use $\Sigma = X^TX$ or the correlation matrix, as these are all essentially functions of the dot product, they are real and symmetric, and so diagonalization yields an orthogonal set of eigenvectors. Using $\Sigma = X^TX$ is essentially the computation of the Singular Value Decomposition (SVD) of $X$ as it relates to finding the directions of highest variance.
 \item Since $\Sigma$ is real and symmetric, we can diagonalize $\Sigma$ via the matrices $\Phi$ and $\Lambda$, where $\Phi$ is orthogonal and $\Lambda$ is diagonal. The matrix $\Phi$ has columns that form the orthonormal basis of eigenvectors of $\Sigma$, $\Lambda$ gives the corresponding eigenvalues, and the equation $\Sigma = \Phi \Lambda \Phi^T$ holds.
 \item The magnitude of the eigenvalues in $\Lambda$ provide insight into the number of dimensions along which the data is organized. Furthermore, since the eigenvectors are orthogonal, the covariance along any two transformed basis vectors are zero (their dot product is zero).
@@ -192,9 +192,45 @@ http://infolab.stanford.edu/~ullman/mmds/ch11.pdf \\
 
 \subsection{Kernel PCA}
 
+The idea is to take the original data set in $\R^D$ and map it (non-linearly) to a feature space via a map $\Phi : \R^D \rightarrow F$, and then do PCA in the space $F$. Recall that PCA relies heavily on the use of the dot product, and so the goal is to perform dot products in feature space. However, explicit computation of dot products in feature space, after performing a non-linear mapping, is not required. Instead, the computation of a kernel function on the input space is used as a proxy.
+
+{\bf Reformulation of PCA to a problem of dot products:}\\
+Given a collection of mean-centered data points $X = \{x_1, ..., x_N\}$ so that $\sum_{i=1}^N x_i = 0$, PCA boils down to a problem of finding eigenvalues and eigenvectors corresponding to the covariance matrix $$C = \frac{1}{N}\sum_{i=1}^N x_i x_i^T.$$ Thus, one must find pairs $\lambda, v$ such that $$\lambda v = Cv = \frac{1}{N}\sum_{i=1}^N (x_i x_i^T)v = \frac{1}{N}\sum_{i=1}^N (x_i \cdot v) x_i.$$ From this equation, it is clear that each eigenvector $v$ lies in the span of $X$, and so the above equation is equivalent to solving \begin{equation}\label{kpca:eq_a}\lambda(x_i \cdot v) = (x_i \cdot Cv) \text{\;\; for all \;\;} i = 1, ..., N,\end{equation} and we know there must exist a vector $\alpha = [\alpha_1 ... \alpha_N]$ such that $v = \sum_{i=1}^N \alpha_ix_i$. Thus, Equation~(\ref{kpca:eq_a}) becomes 
+\begin{equation}\label{kpca:eq_b}
+\lambda \sum_{j=1}^N \alpha_j(x_i \cdot x_j) =\frac{1}{N} \sum_{j=1}^N \alpha_j \left( x_i \cdot \sum_{k=1}^N x_k\right)(x_k \cdot x_j)
+\end{equation} 
+for all $i = 1, ..., N$. Thus, defining an $N \times N$ matrix $K$ by $K_{ij} = (x_i \cdot x_j)$, we can reformulate Equation~(\ref{kpca:eq_b}) as \begin{equation}\label{kpca:eq_c}N\lambda K \alpha = K^2 \alpha.\end{equation} Since $K$ is symmetric, its set of eigenvectors spans the entire space, and so Equation~(\ref{kpca:eq_c}) implies the solutions to $N\lambda \alpha = K \alpha$ give all vectors $\alpha$ solving Equation~(\ref{kpca:eq_c}). Furthermore, since $K$ is positive semidefinite, its eigenvalues are nonnegative, and these eigenvalues will be the values $N\lambda$ solving the equation $N\lambda \alpha = K \alpha$. Diagonalizing $K$ yields eigenvalues $\lambda_1 \leq \cdots \leq \lambda_N$ and a complete set of corresponding eigenvectors $\alpha^1, ..., \alpha^N$. Say that $\lambda_p$ is the least non-zero eigenvalue. We then normalize the $\alpha_i$ for $i = p, ..., N$ according to the rule that the associated eigenvectors of $C$ yield $(v^i \cdot v^i) = 1$ for $i = p, ..., N$. To restate this in terms of a normalization on the $\alpha^i$, we see that
+\begin{align*}
+1 &= (v^i \cdot v^i) \\
+&= \left(\sum_{j=1}^N \alpha_j^i x_j \cdot \sum_{k=1}^N \alpha_k^i x_k \right) \\
+&= \sum_{j, k = 1}^N \alpha_j^i\alpha_k^i (x_j \cdot x_k) \\
+&=  \sum_{j, k = 1}^N \alpha_j^i\alpha_k^i K_{jk} \\
+&= (\alpha^i \cdot K \alpha^i) \\
+&= \lambda^i (\alpha^i \cdot \alpha^i)
+\end{align*}
+for all $i = p, ..., N$. Recall that for PCA, we need to perform projections of the $x \in X$ onto the eigenvectors $v^i$ corresponding to $C$. Thus, we can call $$(v^i \cdot x) = \sum_{j=1}^N \alpha_j^i(x_j \cdot x)$$ the principal components. Notice that this formulation is given entirely in terms of dot products of the points in $X$.
+
+{\bf Adding a nonlinear kernel:}\\
+The prior discussion took place in an arbitrary vector space. As mentioned in the introduction to this section, the goal is to map the set $X = \{x_1, ..., x_N\}$ to a collection of points in feature space $\Phi(X) = \{\Phi(x_1), ..., \Phi(x_N)\}$ and then perform PCA. Hence, the above discussion goes through to feature space and we get the principal components $$(v^i \cdot \Phi(x)) = \sum_{j=1}^N \alpha_j^i(\Phi(x_j) \cdot \Phi(x))$$ corresponding to $\Phi$ in feature space. The key is in the definition of the matrix $K_{ij} = (\Phi(x_i) \cdot \Phi(x_j))$. Here, instead of using an actual dot product in feature space, we use a kernel representation $k(x, y) = (\Phi(x) \cdot \Phi(y))$. The primary result used is that certain kernel functions lead to constructions of maps $\Phi$ under which $k$ behaves as a dot product in that space. Hence, a choice of a kernel map $k$ implicitly chooses for us a mapping $\Phi$ and a corresponding feature space $F$ in which we perform the PCA. This leads us to the
+
+{\bf Algorithm:}\\
+Given a set of points $X = \{x_1, ..., x_N\} \subset \R^D$, kernel PCA procedes as follows:
+\begin{enumerate}[1.]
+\item Choose a suitable kernel function $k(x, y)$ and compute the associated matrix of dot products $K_{ij} = k(x_i, x_j)$.
+\item Diagonalize $K$ to solve for the eigenvalues $\lambda_1 \leq \cdots \leq \lambda_N$ and associated eigenvectors $\alpha^1, ..., \alpha^N$, and normalize them so that $1 = \lambda_i(\alpha^i \cdot \alpha^i)$.
+\item Get a projection function $$(kPCA)_i(x) = \sum_{j=1}^N \alpha_j^i k(x_j, x)$$ onto the $i^{th}$ principal component of $x$ in the feature space. For suitably chosen kernels, this corresponds to PCA in some high-dimensional feature space.
+\end{enumerate}
+
+{\bf Discussion about kernels:}\\
+How does one go about choosing an appropriate kernel function $k$? 
+
+source:\\
+http://www.face-rec.org/algorithms/Kernel/kernelPCA\_scholkopf.pdf
+
+
 \subsection{Locally-linear Embedding (LLE)}
 
-This technique works best when the points in your dataset are assumed to have densely sampled a portion of a manifold that can be `flattened out' in some sense. For instance, the swiss roll is a two-dimensional manifold with boundary that can be flattened out into a portion of a two-dimensional plane, while a torus cannot be flattened out as such and would not be a good candidate for this method. Locally-linear embedding (LLE) also rests on the assumption that points that are nearest to a target point lie on the same portion of the manifold as the target point, i.e. the sampling density is much smaller than the weak feature size of the underlying manifold. 
+This technique works best when the points in your dataset are assumed to have densely sampled a portion of a manifold that can be `flattened out' in some sense. For instance, the swiss roll is a two-dimensional manifold with boundary that can be flattened out into a portion of a two-dimensional plane, while a torus cannot be flattened out as such and would not be a good candidate for this method if one desires to perform a projection into two-dimensional space. Locally-linear embedding (LLE) also rests on the assumption that points that are nearest to a target point lie on the same portion of the manifold as the target point, i.e. the sampling density is much smaller than the weak feature size of the underlying manifold. 
 
 Let $X = \{x_1, ..., x_N\}$ be a set of points in $\R^D$, $K \in \mathbb{N}$, and $d < D$ be the desired embedding dimension. The general idea of performing a LLE is as follows:
 
@@ -213,10 +249,8 @@ Next, the embedded dataset $Y = \{y_1, ..., y_N\}$ must be constructed. Essentia
 \end{enumerate}
 Finally, the bottom $d+1$ eigenvectors of $M = (I - W)^T(I - W)$ (with the exception of the eigenvector corresponding to the smallest eigenvalue) form the embedding vectors. 
 
-
-
 {\bf Algorithm:}
-\begin{enumerate}[(1)]
+\begin{enumerate}[1.]
 \item {\it Find the $K$ nearest neighbors of each point.} Compute the distance matrix of the data set $X$. Let $N_K:X \rightarrow \mathscr{P}(X)$ be the function that assigns to each $x_i$ its $K$ nearest neighbors, $N_K(x_i)$, which can be gleaned from the distance matrix.
 \item {\it Solve for the reconstruction weights.} 
 	\begin{enumerate}[(a)]
@@ -226,6 +260,10 @@ Finally, the bottom $d+1$ eigenvectors of $M = (I - W)^T(I - W)$ (with the excep
 	\end{enumerate}
 \item {\it Compute the embedding coordinates.} Set $M = (I - W)^T(I - W)$. Find the $d + 1$ eigenvectors corresponding to the smallest eigenvalues of $M$. Set the $q^{th}$ row of $Y$ to be the eigenvector corresponding to the $(q+1)^{th}$-smallest eigenvalue. (Thus, the eigenvector corresponding to the smallest eigenvalue of $M$ is not used in $Y$.
 \end{enumerate}
+
+{\bf Notes for the space of persistence diagrams:}\\
+The algorithm as presented requires that we begin with points in linear space, as solving for the weight matrix $W$ involves performing linear algebra on the original dataset. However, it is possible to assign a weight matrix $W$ that does not optimize the error function as stated, but instead assigns weights based on a rule or function. The second part of the algorithm optimizes the embedding vectors with respect to a cost function, regardless of how that weight matrix was constructed, and so the algorithm can continue at step (3) as stated. Preliminary tests show that using LLE in this manner for periodic orbits in the space of persistence diagrams does reconstruct the loop in projected space, although the local manner in which the embedding is constructed does not faithfully represent any distortions in the loop such as pinches or twists, and so more complicated dynamics cannot be recovered by this embedding.
+
 
 sources:\\
 https://www.cs.nyu.edu/~roweis/lle/algorithm.html
